@@ -1,6 +1,7 @@
-import { highlightElem } from './clock.js';
+const secHighlightClass = 'highlight-sec';
+const mainHighlightClass = 'highlight-main';
 
-const hoursToSegmentIdx = { H1: 0, H2: 1, M1: 2, M2: 3 };
+export const hoursToSegmentIdx = { H1: 0, H2: 1, M1: 2, M2: 3 };
 const matrixDrawnNumbers = {
     0: `1 1 1 1 1\n1 0 0 0 1\n1 1 1 1 1`,
     1: `1 0 0 0 1\n1 1 1 1 1\n0 0 0 0 1`,
@@ -13,28 +14,33 @@ const matrixDrawnNumbers = {
     8: `1 1 1 1 1\n1 0 1 0 1\n1 1 1 1 1`,
     9: `1 1 1 0 0\n1 0 1 0 0\n1 1 1 1 1`
 };
-const timeProxy = new Proxy({ H1: null, H2: null, M1: null, M2: null }, {
-    set (obj, prop, val) {
-        if (obj[prop] !== val) {
-            console.log(prop, obj[prop], val);
-            obj[prop] = val;
-            drawSegment(hoursToSegmentIdx[prop], val, true);
-        }
-        return true;
+
+export function highlightElem(elemIdx, type){
+    const elemNode = document.getElementById(`seconds-${elemIdx}`);
+    let className = mainHighlightClass;
+    switch (type) {
+        case 'main': elemNode.dataset.prevClass = mainHighlightClass; break;
+        case 'sec': className = secHighlightClass; break;
+        case 'def': className = ''; break;
+        case 'res':
+            if (elemNode.dataset.prevClass) {
+                elemNode.className = elemNode.dataset.prevClass;
+                delete elemNode.dataset.prevClass;
+            } else {
+                elemNode.className = '';
+            }
+            return;
     }
-});
 
-function updateLocalTimer() {
-    const [ hours, minutes ] = new Date().toLocaleTimeString('uk-GB').split(':');
-    const vals = [...hours.split(''), ...minutes.split('')];
-    Object.keys(timeProxy).forEach((propName, idx) => timeProxy[propName] = vals[idx]);
+    if (elemNode.className === '') {
+        elemNode.className = className;
+    } else {
+        elemNode.dataset.prevClass = elemNode.className;
+        elemNode.className = className;
+    }
 }
 
-export function updateMatrix() {
-    updateLocalTimer();
-}
-
-function drawSegment(segmentIdx, value, main) {
+export function drawSegment(segmentIdx, value, main) {
     const numScheme = matrixDrawnNumbers[value].split('\n').join(' ').split(' ');
     const prevNumScheme = matrixDrawnNumbers[value - 1 === -1 ? 9 : value - 1].split('\n').join(' ').split(' ');
     for (let i = 0; i < 15; i++) {

@@ -1,11 +1,11 @@
 import { createNode } from "./createNode.js";
-import { updateMatrix } from "./clockMatrix.js";
+import { 
+    drawSegment, highlightElem, hoursToSegmentIdx 
+} from "./clockMatrix.js";
 
-const secHighlightClass = 'highlight-sec';
-const mainHighlightClass = 'highlight-main';
 
 export function init() {
-    updateMatrix();
+    updateLocalTimer();
     setTimeout(runTickHandler, 1000 - new Date().getMilliseconds());
 }
 
@@ -15,7 +15,7 @@ export function initNode() {
     for (let section = 0; section < 4; section++){
         const sectionDiv = createNode('div', {className: 'section'});
         Array.from({length: secondsStep})
-            .map((elem,idx) => elem = idx + secondsStep * section)
+            .map((elem,idx) => idx + secondsStep * section)
             .forEach(elem => {
                 const innerText = elem < 10 ? `0${elem}` : elem;
                 const secondsDiv = createNode('span',{ id: `seconds-${elem}`, innerText});
@@ -26,35 +26,29 @@ export function initNode() {
     return div;
 }
 
+export const timeProxy = new Proxy({ H1: null, H2: null, M1: null, M2: null }, {
+    set (obj, prop, val) {
+        if (obj[prop] !== val) {
+            console.log(prop, obj[prop], val);
+            obj[prop] = val;
+            drawSegment(hoursToSegmentIdx[prop], val, true);
+        }
+        return true;
+    }
+});
+
+export function updateLocalTimer() {
+    const [ hours, minutes ] = new Date().toLocaleTimeString('uk-GB').split(':');
+    const vals = [...hours.split(''), ...minutes.split('')];
+    Object.keys(timeProxy).forEach((propName, idx) => timeProxy[propName] = vals[idx]);
+}
+
 function runTickHandler() {
     setInterval(() => {
         const seconds = new Date().toLocaleTimeString('uk-GB').split(':')[2];
         highlightElem(seconds - 1 === -1 ? 59 : seconds - 1, 'res');
         highlightElem(seconds - 0, 'sec');
-        if (seconds - 0 === 0) updateMatrix();
+        if (seconds - 0 === 0) updateLocalTimer();
         
     },1000);
-}
-
-export function highlightElem(elemIdx, type){
-    const elemNode = document.getElementById(`seconds-${elemIdx}`);
-    let className = mainHighlightClass;
-    switch (type) {
-        case 'main': elemNode.dataset.prevClass = mainHighlightClass; break;
-        case 'sec': className = secHighlightClass; break;
-        case 'def': className = ''; break;
-        case 'res':
-            if (elemNode.dataset.prevClass) {
-                elemNode.className = elemNode.dataset.prevClass;
-                delete elemNode.dataset.prevClass;
-            }
-            else elemNode.className = '';
-            return;
-    }
-    
-    if (elemNode.className === '') elemNode.className = className;
-    else {
-        elemNode.dataset.prevClass = elemNode.className;
-        elemNode.className = className;
-    }
 }
