@@ -1,8 +1,8 @@
-const secHighlightClass = 'highlight-sec';
-const mainHighlightClass = 'highlight-main';
+const secondsHighlight = 'highlight-sec';
+const mainTimeHighlight = 'highlight-main';
 
 export const hoursToSegmentIdx = { H1: 0, H2: 1, M1: 2, M2: 3 };
-const matrixDrawnNumbers = {
+const numbersSegmentsSchemes = {
     0: `1 1 1 1 1\n1 0 0 0 1\n1 1 1 1 1`,
     1: `1 0 0 0 1\n1 1 1 1 1\n0 0 0 0 1`,
     2: `1 0 1 1 1\n1 0 1 0 1\n1 1 1 0 1`,
@@ -14,41 +14,45 @@ const matrixDrawnNumbers = {
     8: `1 1 1 1 1\n1 0 1 0 1\n1 1 1 1 1`,
     9: `1 1 1 0 0\n1 0 1 0 0\n1 1 1 1 1`
 };
+const getElemNode = (elemIdx) => {
+    return document.getElementById(`seconds-${elemIdx}`);
+}
+const setElemCurrentClass = (elemNode, className) => {
+    elemNode.className = className;
+}
+const setElemPrevClass = (elemNode, className) => {
+    elemNode.dataset.prevClass = className;
+}
 
 export function highlightElem(elemIdx, type){
-    const elemNode = document.getElementById(`seconds-${elemIdx}`);
-    let className = mainHighlightClass;
+    const elemNode = getElemNode(elemIdx);
+    let className = mainTimeHighlight;
     switch (type) {
-        case 'main': elemNode.dataset.prevClass = mainHighlightClass; break;
-        case 'sec': className = secHighlightClass; break;
+        case 'sec': className = secondsHighlight; break;
         case 'def': className = ''; break;
         case 'res':
-            if (elemNode.dataset.prevClass) {
-                elemNode.className = elemNode.dataset.prevClass;
-                delete elemNode.dataset.prevClass;
-            } else {
-                elemNode.className = '';
-            }
+            const prevClassIsSet = elemNode.dataset.prevClass != null;
+            setElemCurrentClass(elemNode, prevClassIsSet ? elemNode.dataset.prevClass : '');
+            if (prevClassIsSet) delete elemNode.dataset.prevClass;
             return;
     }
 
-    if (elemNode.className === '') {
-        elemNode.className = className;
-    } else {
-        elemNode.dataset.prevClass = elemNode.className;
-        elemNode.className = className;
+    if (elemNode.className !== '') {
+        setElemPrevClass(elemNode, elemNode.className);
     }
+    setElemCurrentClass(elemNode, className);
 }
 
-export function drawSegment(segmentIdx, value, main) {
-    const numScheme = matrixDrawnNumbers[value].split('\n').join(' ').split(' ');
-    const prevNumScheme = matrixDrawnNumbers[value - 1 === -1 ? 9 : value - 1].split('\n').join(' ').split(' ');
-    for (let i = 0; i < 15; i++) {
-        if (prevNumScheme[i] === '1') {
-            highlightElem(i + segmentIdx * 15, 'res');
-        }
+export function drawSegment(segmentIdx, value) {
+    const amountCellsInSegment = 15;
+    const numScheme = numbersSegmentsSchemes[value].split('\n').join(' ').split(' ');
+    const getElemIdx = (idxInSegment) => idxInSegment + segmentIdx * amountCellsInSegment;
+    
+    for (let i = 0; i < amountCellsInSegment; i++) {
+        highlightElem(getElemIdx(i), 'def');
         if (numScheme[i] === '1') {
-            highlightElem(i + segmentIdx * 15, main ? 'main' : '');
+            setElemPrevClass(getElemNode(getElemIdx(i)), mainTimeHighlight);
+            highlightElem(getElemIdx(i));
         }
     }
 }

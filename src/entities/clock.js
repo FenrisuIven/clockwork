@@ -1,12 +1,27 @@
 import { createNode } from "./createNode.js";
+import { getCurrentTime } from "../helpers/currentTime.js";
 import { 
     drawSegment, highlightElem, hoursToSegmentIdx 
 } from "./clockMatrix.js";
 
-
 export function init() {
     updateLocalTimer();
     setTimeout(runTickHandler, 1000 - new Date().getMilliseconds());
+}
+
+function runTickHandler() {
+    setInterval(() => {
+        const seconds = getCurrentTime().seconds;
+        highlightElem(seconds - 1 === -1 ? 59 : seconds - 1, 'res');
+        highlightElem(seconds - 0, 'sec');
+        if (seconds - 0 === 0) updateLocalTimer();
+    },1000);
+}
+
+export function updateLocalTimer() {
+    const { hours, minutes } = getCurrentTime();
+    const vals = [...hours.split(''), ...minutes.split('')];
+    Object.keys(timeProxy).forEach((propName, idx) => timeProxy[propName] = vals[idx]);
 }
 
 export function initNode() {
@@ -36,19 +51,3 @@ export const timeProxy = new Proxy({ H1: null, H2: null, M1: null, M2: null }, {
         return true;
     }
 });
-
-export function updateLocalTimer() {
-    const [ hours, minutes ] = new Date().toLocaleTimeString('uk-GB').split(':');
-    const vals = [...hours.split(''), ...minutes.split('')];
-    Object.keys(timeProxy).forEach((propName, idx) => timeProxy[propName] = vals[idx]);
-}
-
-function runTickHandler() {
-    setInterval(() => {
-        const seconds = new Date().toLocaleTimeString('uk-GB').split(':')[2];
-        highlightElem(seconds - 1 === -1 ? 59 : seconds - 1, 'res');
-        highlightElem(seconds - 0, 'sec');
-        if (seconds - 0 === 0) updateLocalTimer();
-        
-    },1000);
-}
