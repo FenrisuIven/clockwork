@@ -1,0 +1,42 @@
+* {
+  --base-text-color: gray;
+  --highlight-main: rgb(255,245,240);
+  --highlight-sec: rgb(230,120,30);
+  
+  font-family: Courier, serif;
+  font-weight: bold;
+  font-size: 1.7rem;
+  background-color: rgb(55,55,55);
+  color: var(--base-text-color);
+}
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: grid;
+}
+#app {
+  place-self: center center;
+}
+
+.highlight-main {
+  color: var(--highlight-main);
+}
+.highlight-sec {
+  color: var(--highlight-sec);
+}
+
+.clock {
+  width: fit-content;
+  column-gap: 45px;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  .section {
+    column-gap: 10px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(5, auto);
+    grid-template-columns: repeat(3, auto);
+  }
+}
