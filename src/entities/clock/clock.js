@@ -1,8 +1,9 @@
-import { createNode } from "./createNode.js";
-import { getCurrentTime } from "../helpers/currentTime.js";
+import { createNode } from "../../helpers/createNode.js";
+import { getCurrentTime } from "../../helpers/currentTime.js";
+import { MatrixCell } from "../matrix/matrixCell.js";
 import { 
-    drawSegment, highlightElem, hoursToSegmentIdx 
-} from "./clockMatrix.js";
+    drawSegment, hoursToSegmentIdx 
+} from "../matrix/clockMatrix.js";
 
 export function init() {
     updateLocalTimer();
@@ -12,8 +13,8 @@ export function init() {
 function runTickHandler() {
     setInterval(() => {
         const seconds = getCurrentTime().seconds;
-        highlightElem(seconds - 1 === -1 ? 59 : seconds - 1, 'res');
-        highlightElem(seconds - 0, 'sec');
+        MatrixCell.highlightElem(seconds - 1 === -1 ? 59 : seconds - 1, 'res');
+        MatrixCell.highlightElem(seconds - 0, 'sec');
         if (seconds - 0 === 0) updateLocalTimer();
     },1000);
 }
