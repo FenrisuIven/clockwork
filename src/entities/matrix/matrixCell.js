@@ -1,12 +1,18 @@
 import {
     mainTimeHighlight, secondsHighlight
 } from "./clockMatrix.js";
+import {
+    pipEnabled, pipWindow
+} from "../pipHandler/pipHandler.js";
 
-export class MatrixCell {
+export class MatrixCell {    
     static getElemIdx(idxInSegment, segmentIdx, amountCellsInSegment){
         return idxInSegment + segmentIdx * amountCellsInSegment
     }
     static getElemNode(elemIdx) {
+        if (pipEnabled) {
+            return pipWindow.document.getElementById(`seconds-${elemIdx}`) || document.getElementById(`seconds-${elemIdx}`);
+        }
         return document.getElementById(`seconds-${elemIdx}`);
     }
     static setElemCurrentClass(elemIdx, className) {

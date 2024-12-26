@@ -6,6 +6,8 @@ import {
 } from "../matrix/clockMatrix.js";
 import ClockWorker from './clockWorker?worker';
 
+export let clockNode = null;
+
 export function init() {
     updateLocalTimer();
     setTimeout(initWorker, 1000 - new Date().getMilliseconds());
@@ -49,6 +51,7 @@ export function initNode() {
             })
         div.appendChild(sectionDiv);
     }
+    clockNode = div;
     return div;
 }
 

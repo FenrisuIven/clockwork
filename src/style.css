@@ -29,14 +29,26 @@ body {
 
 .clock {
   width: fit-content;
-  column-gap: 45px;
+  column-gap: 2rem;
   display: grid;
   grid-template-columns: repeat(4, auto);
   .section {
-    column-gap: 10px;
+    column-gap: 0.2rem;
     display: grid;
     grid-auto-flow: column;
     grid-template-rows: repeat(5, auto);
     grid-template-columns: repeat(3, auto);
+  }
+}
+
+@media (display-mode: picture-in-picture) {
+  * {
+    font-size: 1.2rem;
+  }
+  .clock {
+    column-gap: 1.5rem;
+    .section {
+      gap: 0.2rem;
+    }
   }
 }
