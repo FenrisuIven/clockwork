@@ -4,19 +4,29 @@ import { MatrixCell } from "../matrix/matrixCell.js";
 import { 
     drawSegment, hoursToSegmentIdx 
 } from "../matrix/clockMatrix.js";
+import ClockWorker from './clockWorker?worker';
 
 export function init() {
     updateLocalTimer();
-    setTimeout(runTickHandler, 1000 - new Date().getMilliseconds());
+    setTimeout(initWorker, 1000 - new Date().getMilliseconds());
 }
 
-function runTickHandler() {
-    setInterval(() => {
-        const seconds = getCurrentTime().seconds;
-        MatrixCell.highlightElem(seconds - 1 === -1 ? 59 : seconds - 1, 'res');
-        MatrixCell.highlightElem(seconds - 0, 'sec');
-        if (seconds - 0 === 0) updateLocalTimer();
-    },1000);
+function initWorker() {
+    const worker = new ClockWorker();
+    worker.onmessage = (e) => workerMessageHandler(e.data);
+}
+
+function workerMessageHandler(data) {
+    if (data.msg) {
+        switch (data.msg) {
+            case 'highlightELem':
+                MatrixCell.highlightElem(data.elemIdx, data.type);
+                break;
+            case 'updateLocalTimer':
+                updateLocalTimer();
+                break;
+        }
+    }
 }
 
 export function updateLocalTimer() {
