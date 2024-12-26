@@ -1,7 +1,7 @@
 * {
-  --base-text-color: gray;
+  --base-text-color: rgb(90, 87, 87);
   --highlight-main: rgb(255,245,240);
-  --highlight-sec: rgb(230,120,30);
+  --highlight-sec: rgb(227, 165, 110);
   
   font-family: Courier, serif;
   font-weight: bold;
@@ -43,12 +43,12 @@ body {
 
 @media (display-mode: picture-in-picture) {
   * {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   .clock {
-    column-gap: 1.5rem;
+    column-gap: 1.2rem;
     .section {
-      gap: 0.2rem;
+      gap: 0.1rem;
     }
   }
 }
