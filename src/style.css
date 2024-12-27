@@ -41,6 +41,23 @@ body {
   }
 }
 
+.pip-button {
+  font-size: 1rem;
+  width: fit-content;
+  height: fit-content;
+  padding: 0.4rem 0.8rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+  border-radius: 0 0 0 10px;
+  background-color: rgba(255,255,255, 0.5);
+  
+  &&:disabled {
+    background-color: rgba(255,255,255, 0.3);
+  }
+}
+
 @media (display-mode: picture-in-picture) {
   * {
     font-size: 1rem;

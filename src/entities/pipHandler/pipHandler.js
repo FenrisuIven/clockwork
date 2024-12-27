@@ -28,6 +28,7 @@ export async function initPiP() {
         pipEnabled = false;
         pipWindow = null;
         document.getElementById('app').appendChild(clockNode);
+        document.getElementById('pip-button').disabled = false;
     });
     
     pipWindow = pipWin;
