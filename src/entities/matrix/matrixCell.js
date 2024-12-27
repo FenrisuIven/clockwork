@@ -2,16 +2,16 @@ import {
     mainTimeHighlight, secondsHighlight
 } from "./clockMatrix.js";
 import {
-    pipEnabled, pipWindow
-} from "../pipHandler/pipHandler.js";
+    floatingWindowEnabled, floatingWindowObject
+} from "../floatingWindowHandler/floatingWindowHandler.js";
 
 export class MatrixCell {    
     static getElemIdx(idxInSegment, segmentIdx, amountCellsInSegment){
         return idxInSegment + segmentIdx * amountCellsInSegment
     }
     static getElemNode(elemIdx) {
-        if (pipEnabled) {
-            return pipWindow.document.getElementById(`seconds-${elemIdx}`) || document.getElementById(`seconds-${elemIdx}`);
+        if (floatingWindowEnabled) {
+            return floatingWindowObject.document.getElementById(`seconds-${elemIdx}`) || document.getElementById(`seconds-${elemIdx}`);
         }
         return document.getElementById(`seconds-${elemIdx}`);
     }
